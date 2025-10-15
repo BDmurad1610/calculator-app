@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Pro - Professional Calculator Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --math: #4CAF50;
+            --finance: #2196F3;
+            --health: #FF9800;
+            --convert: #9C27B0;
+            --everyday: #607D8B;
+            --lifestyle: #795548;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --crypto: #FF6B35;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 25px 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* Group Tabs */
+        .group-tabs {
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+
+        .group-tab {
+            padding: 15px;
+            border: none;
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .group-tab:last-child {
+            border-bottom: none;
+        }
+
+        .group-tab.active {
+            background: #f8f9fa;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+
+        .group-tab i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .group-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .math-bg { background: var(--math); }
+        .finance-bg { background: var(--finance); }
+        .health-bg { background: var(--health); }
+        .convert-bg { background: var(--convert); }
+        .everyday-bg { background: var(--everyday); }
+        .lifestyle-bg { background: var(--lifestyle); }
+
+        /* Group Content */
+        .group-content {
+            display: none;
+            padding: 15px;
+            min-height: 400px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .group-content.active {
+            display: block;
+        }
+
+        .group-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .group-header h2 {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .group-header p {
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Calculator Grid */
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .calc-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .calc-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .calc-card i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .calc-card h4 {
+            font-size: 12px;
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .calc-card p {
+            font-size: 10px;
+            color: #666;
+            margin: 5px 0 0 0;
+        }
+
+        /* Calculator Styles */
+        .calculator {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .calculator-display {
+            width: 100%;
+            height: 60px;
+            border: none;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 24px;
+            text-align: right;
+            padding: 0 15px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            height: 50px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-equals {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .btn-operator {
+            background: #e9ecef;
+            color: var(--primary);
+        }
+
+        .btn-clear {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Scientific Calculator - Updated Layout */
+        .sci-top-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .sci-top-buttons .btn {
+            height: 40px;
+            font-size: 12px;
+            background: var(--math);
+            color: white;
+        }
+
+        .sci-bottom-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .sci-bottom-buttons .btn {
+            height: 40px;
+            font-size: 12px;
+        }
+
+        /* Form Styles */
+        .calculator-form {
+            background: white;
+            padding: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .calculate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* Crypto Badge */
+        .crypto-badge {
+            background: var(--crypto);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+
+        /* Real-time Update */
+        .live-rate {
+            background: var(--success);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 10px;
+            margin-left: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Back Button */
+        .back-button {
+            width: 100%;
+            padding: 12px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 0 0 20px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background: #495057;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 15px;
+            }
+            
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                height: 45px;
+                font-size: 14px;
+            }
+            
+            .calculator-display {
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="badge">26 Tools</div>
+            <h1><i class="fas fa-calculator"></i> Calculator Pro</h1>
+        </header>
+
+        <!-- Group Tabs -->
+        <div class="group-tabs">
+            <button class="group-tab active" onclick="openGroup('math')">
+                <div class="group-icon math-bg">
+                    <i class="fas fa-square-root-alt"></i>
+                </div>
+                <span>Math & Scientific</span>
+            </button>
+
+            <button class="group-tab" onclick="openGroup('finance')">
+                <div class="group-icon finance-bg">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span>Financial</span>
+            </button>
+
+            <button class="group-tab" onclick="openGroup('health')">
+                <div class="group-icon health-bg">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <span>Health & Fitness</span>
+            </button>
+
+            <button class="group-tab" onclick="openGroup('convert')">
+                <div class="group-icon convert-bg">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <span>Converters</span>
+            </button>
+
+            <button class="group-tab" onclick="openGroup('everyday')">
+                <div class="group-icon everyday-bg">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <span>Everyday Tools</span>
+            </button>
+
+            <button class="group-tab" onclick="openGroup('lifestyle')">
+                <div class="group-icon lifestyle-bg">
+                    <i class="fas fa-car"></i>
+                </div>
+                <span>Lifestyle</span>
+            </button>
+        </div>
+
+        <!-- Math & Scientific Group -->
+        <div id="math-group" class="group-content active">
+            <div class="group-header">
+                <h2><i class="fas fa-square-root-alt"></i> Math & Scientific</h2>
+                <p>Advanced mathematical calculations</p>
+            </div>
+            <div class="calculator-grid">
+                <a class="calc-card" onclick="openCalculator('basic')">
+                    <i class="fas fa-calculator"></i>
+                    <h4>Basic Calculator</h4>
+                    <p>Simple arithmetic operations</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('scientific')">
+                    <i class="fas fa-flask"></i>
+                    <h4>Scientific Calculator</h4>
+                    <p>Advanced functions</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('fraction')">
+                    <i class="fas fa-divide"></i>
+                    <h4>Fraction Calculator</h4>
+                    <p>Fraction operations</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('statistics')">
+                    <i class="fas fa-chart-bar"></i>
+                    <h4>Statistics Calculator</h4>
+                    <p>Statistical analysis</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('percentage')">
+                    <i class="fas fa-percent"></i>
+                    <h4>Percentage Calculator</h4>
+                    <p>Percentage calculations</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Financial Group -->
+        <div id="finance-group" class="group-content">
+            <div class="group-header">
+                <h2><i class="fas fa-chart-line"></i> Financial Calculators</h2>
+                <p>Money management tools</p>
+            </div>
+            <div class="calculator-grid">
+                <a class="calc-card" onclick="openCalculator('emi')">
+                    <i class="fas fa-home"></i>
+                    <h4>EMI Calculator</h4>
+                    <p>Loan installment</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('loan')">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <h4>Loan Calculator</h4>
+                    <p>Loan details</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('mortgage')">
+                    <i class="fas fa-building"></i>
+                    <h4>Mortgage Calculator</h4>
+                    <p>Home loan</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('roi')">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>ROI Calculator</h4>
+                    <p>Return on investment</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('compound')">
+                    <i class="fas fa-percentage"></i>
+                    <h4>Compound Interest</h4>
+                    <p>Interest calculation</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('investment')">
+                    <i class="fas fa-chart-pie"></i>
+                    <h4>Investment</h4>
+                    <p>Investment planning</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Health & Fitness Group -->
+        <div id="health-group" class="group-content">
+            <div class="group-header">
+                <h2><i class="fas fa-heartbeat"></i> Health & Fitness</h2>
+                <p>Body and health calculations</p>
+            </div>
+            <div class="calculator-grid">
+                <a class="calc-card" onclick="openCalculator('bmi')">
+                    <i class="fas fa-weight"></i>
+                    <h4>BMI Calculator</h4>
+                    <p>Body mass index</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('ideal-weight')">
+                    <i class="fas fa-balance-scale"></i>
+                    <h4>Ideal Weight</h4>
+                    <p>Healthy weight range</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('body-fat')">
+                    <i class="fas fa-running"></i>
+                    <h4>Body Fat</h4>
+                    <p>Body fat percentage</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('bmr')">
+                    <i class="fas fa-fire"></i>
+                    <h4>BMR Calculator</h4>
+                    <p>Basal metabolic rate</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('calories')">
+                    <i class="fas fa-utensils"></i>
+                    <h4>Calories Calculator</h4>
+                    <p>Calorie needs</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Converters Group -->
+        <div id="convert-group" class="group-content">
+            <div class="group-header">
+                <h2><i class="fas fa-exchange-alt"></i> Converters</h2>
+                <p>Unit and currency conversion</p>
+            </div>
+            <div class="calculator-grid">
+                <a class="calc-card" onclick="openCalculator('currency')">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h4>Currency Converter <span class="live-rate">LIVE</span></h4>
+                    <p>Real-time exchange rates</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('unit-converter')">
+                    <i class="fas fa-ruler-combined"></i>
+                    <h4>Unit Converter</h4>
+                    <p>Measurement units</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Everyday Tools Group -->
+        <div id="everyday-group" class="group-content">
+            <div class="group-header">
+                <h2><i class="fas fa-calendar-day"></i> Everyday Tools</h2>
+                <p>Daily use calculators</p>
+            </div>
+            <div class="calculator-grid">
+                <a class="calc-card" onclick="openCalculator('age')">
+                    <i class="fas fa-birthday-cake"></i>
+                    <h4>Age Calculator</h4>
+                    <p>Calculate age</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('tip')">
+                    <i class="fas fa-utensils"></i>
+                    <h4>Tip Calculator</h4>
+                    <p>Restaurant tipping</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('discount')">
+                    <i class="fas fa-tag"></i>
+                    <h4>Discount Calculator</h4>
+                    <p>Price discounts</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('tax')">
+                    <i class="fas fa-receipt"></i>
+                    <h4>Tax Calculator</h4>
+                    <p>Tax calculation</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('salary')">
+                    <i class="fas fa-money-check"></i>
+                    <h4>Salary Calculator</h4>
+                    <p>Salary analysis</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Lifestyle Group -->
+        <div id="lifestyle-group" class="group-content">
+            <div class="group-header">
+                <h2><i class="fas fa-car"></i> Lifestyle</h2>
+                <p>Daily life calculations</p>
+            </div>
+            <div class="calculator-grid">
+                <a class="calc-card" onclick="openCalculator('fuel-cost')">
+                    <i class="fas fa-gas-pump"></i>
+                    <h4>Fuel Cost</h4>
+                    <p>Fuel expenses</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('car-loan')">
+                    <i class="fas fa-car"></i>
+                    <h4>Car Loan</h4>
+                    <p>Vehicle financing</p>
+                </a>
+                <a class="calc-card" onclick="openCalculator('credit-card')">
+                    <i class="fas fa-credit-card"></i>
+                    <h4>Credit Card</h4>
+                    <p>Credit card payments</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Calculator Views will be dynamically loaded here -->
+        <div id="calculator-view" class="group-content"></div>
+
+        <!-- Back Button -->
+        <button class="back-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Back to Groups
+        </button>
+    </div>
+
+    <script>
+        let currentView = 'groups';
+        let currentGroup = 'math';
+
+        // Open Group
+        function openGroup(groupName) {
+            const groupContents = document.querySelectorAll('.group-content');
+            groupContents.forEach(group => group.classList.remove('active'));
+            
+            const groupTabs = document.querySelectorAll('.group-tab');
+            groupTabs.forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(groupName + '-group').classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            currentView = 'groups';
+            currentGroup = groupName;
+        }
+
+        // Open Calculator
+        function openCalculator(calcName) {
+            const calculatorView = document.getElementById('calculator-view');
+            const calculatorHTML = getCalculatorHTML(calcName);
+            
+            if (calculatorHTML) {
+                const groupContents = document.querySelectorAll('.group-content');
+                groupContents.forEach(group => group.classList.remove('active'));
+                
+                calculatorView.innerHTML = calculatorHTML;
+                calculatorView.classList.add('active');
+                
+                currentView = 'calculator';
+                
+                // Initialize calculator specific functions
+                initializeCalculator(calcName);
+            }
+        }
+
+        // Initialize Calculator Specific Functions
+        function initializeCalculator(calcName) {
+            switch(calcName) {
+                case 'basic':
+                    document.getElementById('display').value = '0';
+                    break;
+                case 'scientific':
+                    document.getElementById('sci-display').value = '0';
+                    break;
+                case 'age':
+                    const defaultDate = new Date();
+                    defaultDate.setFullYear(defaultDate.getFullYear() - 25);
+                    document.getElementById('birth-date').valueAsDate = defaultDate;
+                    break;
+            }
+        }
+
+        // Get Calculator HTML - ALL CALCULATORS ACTIVE NOW
+        function getCalculatorHTML(calcName) {
+            const calculators = {
+                'basic': `
+                    <div class="calculator">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 15px;">
+                            <i class="fas fa-calculator"></i> Basic Calculator
+                        </h3>
+                        <input type="text" class="calculator-display" id="display" readonly placeholder="0">
+                        <div class="buttons">
+                            <button class="btn btn-clear" onclick="clearDisplay()">C</button>
+                            <button class="btn btn-operator" onclick="deleteLast()">⌫</button>
+                            <button class="btn btn-operator" onclick="appendToDisplay('%')">%</button>
+                            <button class="btn btn-operator" onclick="appendToDisplay('/')">/</button>
+                            
+                            <button class="btn" onclick="appendToDisplay('7')">7</button>
+                            <button class="btn" onclick="appendToDisplay('8')">8</button>
+                            <button class="btn" onclick="appendToDisplay('9')">9</button>
+                            <button class="btn btn-operator" onclick="appendToDisplay('*')">×</button>
+                            
+                            <button class="btn" onclick="appendToDisplay('4')">4</button>
+                            <button class="btn" onclick="appendToDisplay('5')">5</button>
+                            <button class="btn" onclick="appendToDisplay('6')">6</button>
+                            <button class="btn btn-operator" onclick="appendToDisplay('-')">-</button>
+                            
+                            <button class="btn" onclick="appendToDisplay('1')">1</button>
+                            <button class="btn" onclick="appendToDisplay('2')">2</button>
+                            <button class="btn" onclick="appendToDisplay('3')">3</button>
+                            <button class="btn btn-operator" onclick="appendToDisplay('+')">+</button>
+                            
+                            <button class="btn" onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
+                            <button class="btn" onclick="appendToDisplay('.')">.</button>
+                            <button class="btn btn-equals" onclick="calculate()">=</button>
+                        </div>
+                    </div>
+                `,
+                
+                'scientific': `
+                    <div class="calculator">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 15px;">
+                            <i class="fas fa-flask"></i> Scientific Calculator
+                        </h3>
+                        <input type="text" class="calculator-display" id="sci-display" readonly placeholder="0">
+                        
+                        <!-- Scientific Buttons on TOP -->
+                        <div class="sci-top-buttons">
+                            <button class="btn" onclick="sciFunction('Math.sin(')">sin</button>
+                            <button class="btn" onclick="sciFunction('Math.cos(')">cos</button>
+                            <button class="btn" onclick="sciFunction('Math.tan(')">tan</button>
+                            <button class="btn" onclick="sciFunction('Math.log(')">log</button>
+                            
+                            <button class="btn" onclick="sciFunction('Math.sqrt(')">√</button>
+                            <button class="btn" onclick="sciFunction('Math.pow(')">x^y</button>
+                            <button class="btn" onclick="sciFunction('Math.PI')">π</button>
+                            <button class="btn" onclick="sciFunction('Math.E')">e</button>
+                            
+                            <button class="btn" onclick="sciAppend('(')">(</button>
+                            <button class="btn" onclick="sciAppend(')')">)</button>
+                            <button class="btn" onclick="sciFunction('1/')">1/x</button>
+                            <button class="btn" onclick="sciFactorial()">x!</button>
+                        </div>
+
+                        <!-- Basic Calculator Buttons -->
+                        <div class="buttons">
+                            <button class="btn btn-clear" onclick="sciClear()">C</button>
+                            <button class="btn btn-operator" onclick="sciDelete()">⌫</button>
+                            <button class="btn btn-operator" onclick="sciAppend('%')">%</button>
+                            <button class="btn btn-operator" onclick="sciAppend('/')">/</button>
+                            
+                            <button class="btn" onclick="sciAppend('7')">7</button>
+                            <button class="btn" onclick="sciAppend('8')">8</button>
+                            <button class="btn" onclick="sciAppend('9')">9</button>
+                            <button class="btn btn-operator" onclick="sciAppend('*')">×</button>
+                            
+                            <button class="btn" onclick="sciAppend('4')">4</button>
+                            <button class="btn" onclick="sciAppend('5')">5</button>
+                            <button class="btn" onclick="sciAppend('6')">6</button>
+                            <button class="btn btn-operator" onclick="sciAppend('-')">-</button>
+                            
+                            <button class="btn" onclick="sciAppend('1')">1</button>
+                            <button class="btn" onclick="sciAppend('2')">2</button>
+                            <button class="btn" onclick="sciAppend('3')">3</button>
+                            <button class="btn btn-operator" onclick="sciAppend('+')">+</button>
+                            
+                            <button class="btn" onclick="sciAppend('0')">0</button>
+                            <button class="btn" onclick="sciAppend('.')">.</button>
+                            <button class="btn btn-equals" onclick="sciCalculate()">=</button>
+                        </div>
+
+                        <!-- Additional Scientific Functions at Bottom -->
+                        <div class="sci-bottom-buttons">
+                            <button class="btn btn-operator" onclick="sciFunction('Math.asin(')">asin</button>
+                            <button class="btn btn-operator" onclick="sciFunction('Math.acos(')">acos</button>
+                            <button class="btn btn-operator" onclick="sciFunction('Math.atan(')">atan</button>
+                            <button class="btn btn-operator" onclick="sciFunction('Math.log10(')">log10</button>
+                        </div>
+                    </div>
+                `,
+
+                'currency': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-money-bill-wave"></i> Currency Converter
+                            <span class="live-rate">LIVE RATES</span>
+                        </h3>
+                        <div class="form-group">
+                            <label>Amount:</label>
+                            <input type="number" class="form-control" id="amount" placeholder="Enter amount" value="1">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>From Currency:</label>
+                                <select class="form-control" id="from-currency">
+                                    <optgroup label="Major Currencies">
+                                        <option value="USD">USD - US Dollar</option>
+                                        <option value="EUR">EUR - Euro</option>
+                                        <option value="GBP">GBP - British Pound</option>
+                                        <option value="JPY">JPY - Japanese Yen</option>
+                                        <option value="AUD">AUD - Australian Dollar</option>
+                                        <option value="CAD">CAD - Canadian Dollar</option>
+                                        <option value="CHF">CHF - Swiss Franc</option>
+                                    </optgroup>
+                                    <optgroup label="Asian Currencies">
+                                        <option value="CNY">CNY - Chinese Yuan</option>
+                                        <option value="INR">INR - Indian Rupee</option>
+                                        <option value="BDT">BDT - Bangladeshi Taka</option>
+                                        <option value="PKR">PKR - Pakistani Rupee</option>
+                                        <option value="LKR">LKR - Sri Lankan Rupee</option>
+                                        <option value="NPR">NPR - Nepalese Rupee</option>
+                                        <option value="KRW">KRW - South Korean Won</option>
+                                        <option value="SGD">SGD - Singapore Dollar</option>
+                                        <option value="MYR">MYR - Malaysian Ringgit</option>
+                                        <option value="THB">THB - Thai Baht</option>
+                                        <option value="IDR">IDR - Indonesian Rupiah</option>
+                                        <option value="VND">VND - Vietnamese Dong</option>
+                                        <option value="PHP">PHP - Philippine Peso</option>
+                                    </optgroup>
+                                    <optgroup label="Middle East & Africa">
+                                        <option value="AED">AED - UAE Dirham</option>
+                                        <option value="SAR">SAR - Saudi Riyal</option>
+                                        <option value="QAR">QAR - Qatari Riyal</option>
+                                        <option value="EGP">EGP - Egyptian Pound</option>
+                                        <option value="ZAR">ZAR - South African Rand</option>
+                                    </optgroup>
+                                    <optgroup label="Americas">
+                                        <option value="BRL">BRL - Brazilian Real</option>
+                                        <option value="MXN">MXN - Mexican Peso</option>
+                                        <option value="ARS">ARS - Argentine Peso</option>
+                                    </optgroup>
+                                    <optgroup label="Cryptocurrencies">
+                                        <option value="BTC">BTC - Bitcoin</option>
+                                        <option value="ETH">ETH - Ethereum</option>
+                                        <option value="BNB">BNB - Binance Coin</option>
+                                        <option value="XRP">XRP - Ripple</option>
+                                        <option value="ADA">ADA - Cardano</option>
+                                        <option value="DOGE">DOGE - Dogecoin</option>
+                                        <option value="DOT">DOT - Polkadot</option>
+                                        <option value="LTC">LTC - Litecoin</option>
+                                        <option value="SOL">SOL - Solana</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>To Currency:</label>
+                                <select class="form-control" id="to-currency">
+                                    <optgroup label="Major Currencies">
+                                        <option value="BDT">BDT - Bangladeshi Taka</option>
+                                        <option value="USD">USD - US Dollar</option>
+                                        <option value="EUR">EUR - Euro</option>
+                                        <option value="GBP">GBP - British Pound</option>
+                                        <option value="JPY">JPY - Japanese Yen</option>
+                                        <option value="AUD">AUD - Australian Dollar</option>
+                                        <option value="CAD">CAD - Canadian Dollar</option>
+                                    </optgroup>
+                                    <optgroup label="Asian Currencies">
+                                        <option value="INR">INR - Indian Rupee</option>
+                                        <option value="CNY">CNY - Chinese Yuan</option>
+                                        <option value="PKR">PKR - Pakistani Rupee</option>
+                                        <option value="LKR">LKR - Sri Lankan Rupee</option>
+                                        <option value="NPR">NPR - Nepalese Rupee</option>
+                                        <option value="KRW">KRW - South Korean Won</option>
+                                        <option value="SGD">SGD - Singapore Dollar</option>
+                                        <option value="MYR">MYR - Malaysian Ringgit</option>
+                                        <option value="THB">THB - Thai Baht</option>
+                                        <option value="IDR">IDR - Indonesian Rupiah</option>
+                                        <option value="VND">VND - Vietnamese Dong</option>
+                                        <option value="PHP">PHP - Philippine Peso</option>
+                                    </optgroup>
+                                    <optgroup label="Middle East & Africa">
+                                        <option value="AED">AED - UAE Dirham</option>
+                                        <option value="SAR">SAR - Saudi Riyal</option>
+                                        <option value="QAR">QAR - Qatari Riyal</option>
+                                        <option value="EGP">EGP - Egyptian Pound</option>
+                                        <option value="ZAR">ZAR - South African Rand</option>
+                                    </optgroup>
+                                    <optgroup label="Americas">
+                                        <option value="BRL">BRL - Brazilian Real</option>
+                                        <option value="MXN">MXN - Mexican Peso</option>
+                                        <option value="ARS">ARS - Argentine Peso</option>
+                                    </optgroup>
+                                    <optgroup label="Cryptocurrencies">
+                                        <option value="BTC">BTC - Bitcoin</option>
+                                        <option value="ETH">ETH - Ethereum</option>
+                                        <option value="BNB">BNB - Binance Coin</option>
+                                        <option value="XRP">XRP - Ripple</option>
+                                        <option value="ADA">ADA - Cardano</option>
+                                        <option value="DOGE">DOGE - Dogecoin</option>
+                                        <option value="DOT">DOT - Polkadot</option>
+                                        <option value="LTC">LTC - Litecoin</option>
+                                        <option value="SOL">SOL - Solana</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="calculate-btn" onclick="convertCurrency()">
+                            <i class="fas fa-exchange-alt"></i> Convert Currency
+                        </button>
+                        <div id="currency-result" class="result"></div>
+                        <div style="text-align: center; margin-top: 15px; font-size: 12px; color: #666;">
+                            <i class="fas fa-info-circle"></i> Rates updated: ${new Date().toLocaleDateString()}
+                        </div>
+                    </div>
+                `,
+
+                'bmi': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-weight"></i> BMI Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Weight (kg):</label>
+                            <input type="number" class="form-control" id="weight" placeholder="Enter weight in kg">
+                        </div>
+                        <div class="form-group">
+                            <label>Height (cm):</label>
+                            <input type="number" class="form-control" id="height" placeholder="Enter height in cm">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateBMI()">Calculate BMI</button>
+                        <div id="bmi-result" class="result"></div>
+                    </div>
+                `,
+
+                'emi': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-home"></i> EMI Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Loan Amount ($):</label>
+                            <input type="number" class="form-control" id="loan-amount" placeholder="Enter loan amount">
+                        </div>
+                        <div class="form-group">
+                            <label>Interest Rate (% per year):</label>
+                            <input type="number" class="form-control" id="interest-rate" placeholder="Enter interest rate" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Loan Term (months):</label>
+                            <input type="number" class="form-control" id="loan-term" placeholder="Enter loan term in months">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateEMI()">Calculate EMI</button>
+                        <div id="emi-result" class="result"></div>
+                    </div>
+                `,
+
+                'age': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-birthday-cake"></i> Age Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Birth Date:</label>
+                            <input type="date" class="form-control" id="birth-date">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateAge()">Calculate Age</button>
+                        <div id="age-result" class="result"></div>
+                    </div>
+                `,
+
+                'loan': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-hand-holding-usd"></i> Loan Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Loan Amount ($):</label>
+                            <input type="number" class="form-control" id="loan-principal" placeholder="Enter loan amount" value="10000">
+                        </div>
+                        <div class="form-group">
+                            <label>Interest Rate (% per year):</label>
+                            <input type="number" class="form-control" id="loan-rate" placeholder="Enter interest rate" value="5.5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Loan Term (years):</label>
+                            <input type="number" class="form-control" id="loan-years" placeholder="Enter loan term" value="5">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateLoan()">Calculate Loan</button>
+                        <div id="loan-result" class="result"></div>
+                    </div>
+                `,
+
+                'mortgage': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-building"></i> Mortgage Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Home Price ($):</label>
+                            <input type="number" class="form-control" id="home-price" placeholder="Enter home price" value="250000">
+                        </div>
+                        <div class="form-group">
+                            <label>Down Payment ($):</label>
+                            <input type="number" class="form-control" id="down-payment" placeholder="Enter down payment" value="50000">
+                        </div>
+                        <div class="form-group">
+                            <label>Interest Rate (%):</label>
+                            <input type="number" class="form-control" id="mortgage-rate" placeholder="Enter interest rate" value="3.5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Loan Term (years):</label>
+                            <input type="number" class="form-control" id="mortgage-years" placeholder="Enter loan term" value="30">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateMortgage()">Calculate Mortgage</button>
+                        <div id="mortgage-result" class="result"></div>
+                    </div>
+                `,
+
+                'roi': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-chart-line"></i> ROI Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Initial Investment ($):</label>
+                            <input type="number" class="form-control" id="initial-investment" placeholder="Enter initial investment" value="10000">
+                        </div>
+                        <div class="form-group">
+                            <label>Final Value ($):</label>
+                            <input type="number" class="form-control" id="final-value" placeholder="Enter final value" value="15000">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateROI()">Calculate ROI</button>
+                        <div id="roi-result" class="result"></div>
+                    </div>
+                `,
+
+                'compound': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-percentage"></i> Compound Interest Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Principal Amount ($):</label>
+                            <input type="number" class="form-control" id="principal" placeholder="Enter principal amount" value="1000">
+                        </div>
+                        <div class="form-group">
+                            <label>Annual Rate (%):</label>
+                            <input type="number" class="form-control" id="annual-rate" placeholder="Enter annual rate" value="5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Time (years):</label>
+                            <input type="number" class="form-control" id="time-years" placeholder="Enter time in years" value="10">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateCompound()">Calculate</button>
+                        <div id="compound-result" class="result"></div>
+                    </div>
+                `,
+
+                'investment': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-chart-pie"></i> Investment Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Monthly Investment ($):</label>
+                            <input type="number" class="form-control" id="monthly-investment" placeholder="Enter monthly amount" value="500">
+                        </div>
+                        <div class="form-group">
+                            <label>Annual Return (%):</label>
+                            <input type="number" class="form-control" id="annual-return" placeholder="Expected annual return" value="7" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Investment Period (years):</label>
+                            <input type="number" class="form-control" id="investment-years" placeholder="Investment period" value="20">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateInvestment()">Calculate</button>
+                        <div id="investment-result" class="result"></div>
+                    </div>
+                `,
+
+                'ideal-weight': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-balance-scale"></i> Ideal Weight Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Height (cm):</label>
+                            <input type="number" class="form-control" id="height-ideal" placeholder="Enter height in cm" value="170">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender:</label>
+                            <select class="form-control" id="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <button class="calculate-btn" onclick="calculateIdealWeight()">Calculate</button>
+                        <div id="ideal-weight-result" class="result"></div>
+                    </div>
+                `,
+
+                'body-fat': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-running"></i> Body Fat Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Weight (kg):</label>
+                            <input type="number" class="form-control" id="weight-fat" placeholder="Enter weight" value="70">
+                        </div>
+                        <div class="form-group">
+                            <label>Waist (cm):</label>
+                            <input type="number" class="form-control" id="waist" placeholder="Enter waist measurement" value="80">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender:</label>
+                            <select class="form-control" id="gender-fat">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <button class="calculate-btn" onclick="calculateBodyFat()">Calculate</button>
+                        <div id="body-fat-result" class="result"></div>
+                    </div>
+                `,
+
+                'bmr': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-fire"></i> BMR Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Weight (kg):</label>
+                            <input type="number" class="form-control" id="weight-bmr" placeholder="Enter weight" value="70">
+                        </div>
+                        <div class="form-group">
+                            <label>Height (cm):</label>
+                            <input type="number" class="form-control" id="height-bmr" placeholder="Enter height" value="170">
+                        </div>
+                        <div class="form-group">
+                            <label>Age:</label>
+                            <input type="number" class="form-control" id="age-bmr" placeholder="Enter age" value="30">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender:</label>
+                            <select class="form-control" id="gender-bmr">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <button class="calculate-btn" onclick="calculateBMR()">Calculate BMR</button>
+                        <div id="bmr-result" class="result"></div>
+                    </div>
+                `,
+
+                'calories': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-utensils"></i> Calories Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Weight (kg):</label>
+                            <input type="number" class="form-control" id="weight-calories" placeholder="Enter weight" value="70">
+                        </div>
+                        <div class="form-group">
+                            <label>Activity Level:</label>
+                            <select class="form-control" id="activity-level">
+                                <option value="1.2">Sedentary (little exercise)</option>
+                                <option value="1.375">Light (1-3 days/week)</option>
+                                <option value="1.55" selected>Moderate (3-5 days/week)</option>
+                                <option value="1.725">Active (6-7 days/week)</option>
+                                <option value="1.9">Very Active (hard exercise daily)</option>
+                            </select>
+                        </div>
+                        <button class="calculate-btn" onclick="calculateCalories()">Calculate Calories</button>
+                        <div id="calories-result" class="result"></div>
+                    </div>
+                `,
+
+                'percentage': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-percent"></i> Percentage Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>What is</label>
+                            <input type="number" class="form-control" id="percentage-value" placeholder="Enter value" value="20">
+                        </div>
+                        <div class="form-group">
+                            <label>% of</label>
+                            <input type="number" class="form-control" id="percentage-of" placeholder="Enter total" value="100">
+                        </div>
+                        <button class="calculate-btn" onclick="calculatePercentage()">Calculate</button>
+                        <div id="percentage-result" class="result"></div>
+                    </div>
+                `,
+
+                'unit-converter': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-ruler-combined"></i> Unit Converter
+                        </h3>
+                        <div class="form-group">
+                            <label>Value:</label>
+                            <input type="number" class="form-control" id="unit-value" placeholder="Enter value" value="1">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>From:</label>
+                                <select class="form-control" id="from-unit">
+                                    <option value="cm">Centimeters</option>
+                                    <option value="m">Meters</option>
+                                    <option value="km">Kilometers</option>
+                                    <option value="inch">Inches</option>
+                                    <option value="ft">Feet</option>
+                                    <option value="mile">Miles</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>To:</label>
+                                <select class="form-control" id="to-unit">
+                                    <option value="m">Meters</option>
+                                    <option value="cm">Centimeters</option>
+                                    <option value="km">Kilometers</option>
+                                    <option value="inch">Inches</option>
+                                    <option value="ft">Feet</option>
+                                    <option value="mile">Miles</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="calculate-btn" onclick="convertUnits()">Convert</button>
+                        <div id="unit-result" class="result"></div>
+                    </div>
+                `,
+
+                'fraction': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-divide"></i> Fraction Calculator
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Fraction 1:</label>
+                                <input type="number" class="form-control" id="frac1-num" placeholder="Numerator" value="1">
+                                <input type="number" class="form-control" id="frac1-den" placeholder="Denominator" value="2" style="margin-top: 5px;">
+                            </div>
+                            <div class="form-group">
+                                <label>Fraction 2:</label>
+                                <input type="number" class="form-control" id="frac2-num" placeholder="Numerator" value="1">
+                                <input type="number" class="form-control" id="frac2-den" placeholder="Denominator" value="4" style="margin-top: 5px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Operation:</label>
+                            <select class="form-control" id="frac-operation">
+                                <option value="add">Addition (+)</option>
+                                <option value="subtract">Subtraction (-)</option>
+                                <option value="multiply">Multiplication (×)</option>
+                                <option value="divide">Division (÷)</option>
+                            </select>
+                        </div>
+                        <button class="calculate-btn" onclick="calculateFraction()">Calculate</button>
+                        <div id="fraction-result" class="result"></div>
+                    </div>
+                `,
+
+                'statistics': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-chart-bar"></i> Statistics Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Enter numbers (comma separated):</label>
+                            <input type="text" class="form-control" id="stats-data" placeholder="e.g., 1,2,3,4,5" value="1,2,3,4,5">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateStatistics()">Calculate</button>
+                        <div id="stats-result" class="result" style="text-align: left; font-size: 14px; font-weight: normal;"></div>
+                    </div>
+                `,
+
+                'tip': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-utensils"></i> Tip Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Bill Amount ($):</label>
+                            <input type="number" class="form-control" id="bill-amount" placeholder="Enter bill amount" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Tip Percentage (%):</label>
+                            <input type="number" class="form-control" id="tip-percent" placeholder="Enter tip percentage" value="15">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of People:</label>
+                            <input type="number" class="form-control" id="tip-people" placeholder="Number of people" value="1">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateTip()">Calculate Tip</button>
+                        <div id="tip-result" class="result"></div>
+                    </div>
+                `,
+
+                'discount': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-tag"></i> Discount Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Original Price ($):</label>
+                            <input type="number" class="form-control" id="original-price" placeholder="Enter original price" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Discount Percentage (%):</label>
+                            <input type="number" class="form-control" id="discount-percent" placeholder="Enter discount" value="20">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateDiscount()">Calculate</button>
+                        <div id="discount-result" class="result"></div>
+                    </div>
+                `,
+
+                'tax': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-receipt"></i> Tax Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Amount ($):</label>
+                            <input type="number" class="form-control" id="tax-amount" placeholder="Enter amount" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Tax Rate (%):</label>
+                            <input type="number" class="form-control" id="tax-rate" placeholder="Enter tax rate" value="7.5">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateTax()">Calculate Tax</button>
+                        <div id="tax-result" class="result"></div>
+                    </div>
+                `,
+
+                'salary': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-money-check"></i> Salary Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Annual Salary ($):</label>
+                            <input type="number" class="form-control" id="annual-salary" placeholder="Enter annual salary" value="50000">
+                        </div>
+                        <div class="form-group">
+                            <label>Pay Frequency:</label>
+                            <select class="form-control" id="pay-frequency">
+                                <option value="52">Weekly</option>
+                                <option value="26">Bi-Weekly</option>
+                                <option value="24">Semi-Monthly</option>
+                                <option value="12" selected>Monthly</option>
+                            </select>
+                        </div>
+                        <button class="calculate-btn" onclick="calculateSalary()">Calculate</button>
+                        <div id="salary-result" class="result"></div>
+                    </div>
+                `,
+
+                'fuel-cost': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-gas-pump"></i> Fuel Cost Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Distance (miles):</label>
+                            <input type="number" class="form-control" id="distance" placeholder="Enter distance" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Fuel Efficiency (MPG):</label>
+                            <input type="number" class="form-control" id="mpg" placeholder="Miles per gallon" value="25">
+                        </div>
+                        <div class="form-group">
+                            <label>Fuel Price ($/gallon):</label>
+                            <input type="number" class="form-control" id="fuel-price" placeholder="Price per gallon" value="3.5" step="0.01">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateFuelCost()">Calculate</button>
+                        <div id="fuel-result" class="result"></div>
+                    </div>
+                `,
+
+                'car-loan': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-car"></i> Car Loan Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Car Price ($):</label>
+                            <input type="number" class="form-control" id="car-price" placeholder="Enter car price" value="25000">
+                        </div>
+                        <div class="form-group">
+                            <label>Down Payment ($):</label>
+                            <input type="number" class="form-control" id="car-down" placeholder="Enter down payment" value="5000">
+                        </div>
+                        <div class="form-group">
+                            <label>Interest Rate (%):</label>
+                            <input type="number" class="form-control" id="car-rate" placeholder="Enter interest rate" value="5.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Loan Term (months):</label>
+                            <input type="number" class="form-control" id="car-term" placeholder="Enter loan term" value="60">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateCarLoan()">Calculate</button>
+                        <div id="car-loan-result" class="result"></div>
+                    </div>
+                `,
+
+                'credit-card': `
+                    <div class="calculator-form">
+                        <h3 style="text-align: center; color: var(--primary); margin-bottom: 20px;">
+                            <i class="fas fa-credit-card"></i> Credit Card Calculator
+                        </h3>
+                        <div class="form-group">
+                            <label>Balance ($):</label>
+                            <input type="number" class="form-control" id="card-balance" placeholder="Enter balance" value="5000">
+                        </div>
+                        <div class="form-group">
+                            <label>Interest Rate (%):</label>
+                            <input type="number" class="form-control" id="card-rate" placeholder="Enter interest rate" value="18">
+                        </div>
+                        <div class="form-group">
+                            <label>Monthly Payment ($):</label>
+                            <input type="number" class="form-control" id="card-payment" placeholder="Enter monthly payment" value="200">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateCreditCard()">Calculate</button>
+                        <div id="card-result" class="result"></div>
+                    </div>
+                `
+            };
+
+            return calculators[calcName] || `
+                <div style="text-align: center; padding: 50px 20px;">
+                    <i class="fas fa-tools" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3>${calcName.replace('-', ' ').toUpperCase()} Calculator</h3>
+                    <p style="color: #666;">This calculator is coming soon!</p>
+                </div>
+            `;
+        }
+
+        // ==================== ALL CALCULATOR FUNCTIONS ====================
+
+        // Basic Calculator Functions
+        function appendToDisplay(value) {
+            const display = document.getElementById('display');
+            if (display.value === '0' && value !== '.') {
+                display.value = value;
+            } else {
+                display.value += value;
+            }
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').value = '0';
+        }
+
+        function deleteLast() {
+            const display = document.getElementById('display');
+            display.value = display.value.slice(0, -1);
+            if (display.value === '') display.value = '0';
+        }
+
+        function calculate() {
+            const display = document.getElementById('display');
+            try {
+                display.value = eval(display.value);
+            } catch (error) {
+                display.value = 'Error';
+            }
+        }
+
+        // Scientific Calculator Functions
+        function sciAppend(value) {
+            const display = document.getElementById('sci-display');
+            if (display.value === '0' && value !== '.') {
+                display.value = value;
+            } else {
+                display.value += value;
+            }
+        }
+
+        function sciClear() {
+            document.getElementById('sci-display').value = '0';
+        }
+
+        function sciDelete() {
+            const display = document.getElementById('sci-display');
+            display.value = display.value.slice(0, -1);
+            if (display.value === '') display.value = '0';
+        }
+
+        function sciCalculate() {
+            const display = document.getElementById('sci-display');
+            try {
+                let expression = display.value
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/π/g, 'Math.PI')
+                    .replace(/e/g, 'Math.E');
+                
+                display.value = eval(expression);
+            } catch (error) {
+                display.value = 'Error';
+            }
+        }
+
+        function sciFunction(func) {
+            const display = document.getElementById('sci-display');
+            if (display.value === '0') {
+                display.value = func;
+            } else {
+                display.value += func;
+            }
+        }
+
+        function sciFactorial() {
+            const display = document.getElementById('sci-display');
+            try {
+                let num = parseInt(display.value);
+                if (num < 0) {
+                    display.value = 'Error';
+                    return;
+                }
+                if (num > 100) {
+                    display.value = 'Too Large';
+                    return;
+                }
+                let result = 1;
+                for (let i = 2; i <= num; i++) {
+                    result *= i;
+                }
+                display.value = result;
+            } catch (error) {
+                display.value = 'Error';
+            }
+        }
+
+        // BMI Calculator
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value) / 100;
+            
+            if (weight && height) {
+                const bmi = (weight / (height * height)).toFixed(1);
+                let category = '';
+                let color = '';
+                
+                if (bmi < 18.5) {
+                    category = 'Underweight';
+                    color = 'var(--warning)';
+                } else if (bmi < 25) {
+                    category = 'Normal weight';
+                    color = 'var(--success)';
+                } else if (bmi < 30) {
+                    category = 'Overweight';
+                    color = 'var(--warning)';
+                } else {
+                    category = 'Obese';
+                    color = 'var(--danger)';
+                }
+                
+                document.getElementById('bmi-result').innerHTML = 
+                    `BMI: <span style="color: ${color}">${bmi}</span><br>
+                     <small>${category}</small>`;
+            } else {
+                document.getElementById('bmi-result').innerHTML = 'Please enter valid values';
+            }
+        }
+
+        // EMI Calculator
+        function calculateEMI() {
+            const principal = parseFloat(document.getElementById('loan-amount').value);
+            const rate = parseFloat(document.getElementById('interest-rate').value) / 100 / 12;
+            const time = parseFloat(document.getElementById('loan-term').value);
+            
+            if (principal && rate && time) {
+                const emi = (principal * rate * Math.pow(1 + rate, time)) / 
+                           (Math.pow(1 + rate, time) - 1);
+                const totalPayment = emi * time;
+                const totalInterest = totalPayment - principal;
+                
+                document.getElementById('emi-result').innerHTML = 
+                    `Monthly EMI: $${emi.toFixed(2)}<br>
+                     <small>Total Interest: $${totalInterest.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('emi-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Currency Converter
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const from = document.getElementById('from-currency').value;
+            const to = document.getElementById('to-currency').value;
+            
+            if (!amount || amount <= 0) {
+                document.getElementById('currency-result').innerHTML = 'Please enter a valid amount';
+                return;
+            }
+            
+            const rates = {
+                USD: { 
+                    USD: 1, EUR: 0.85, GBP: 0.73, JPY: 110, AUD: 1.35, CAD: 1.25, CHF: 0.92,
+                    CNY: 6.45, INR: 75, BDT: 110, PKR: 175, LKR: 200, NPR: 120,
+                    KRW: 1180, SGD: 1.35, MYR: 4.20, THB: 33.5, IDR: 14200, VND: 23000, PHP: 51.5,
+                    AED: 3.67, SAR: 3.75, QAR: 3.64, EGP: 15.7, ZAR: 15.2,
+                    BRL: 5.25, MXN: 20.1, ARS: 102.5,
+                    BTC: 0.000025, ETH: 0.0004, BNB: 0.003, XRP: 1.5, ADA: 2.8, DOGE: 5.2,
+                    DOT: 0.12, LTC: 0.015, SOL: 0.035
+                },
+                EUR: { 
+                    USD: 1.18, EUR: 1, GBP: 0.86, JPY: 129, AUD: 1.59, CAD: 1.47, CHF: 1.08,
+                    CNY: 7.59, INR: 88, BDT: 129, PKR: 206, LKR: 235, NPR: 141,
+                    KRW: 1388, SGD: 1.59, MYR: 4.94, THB: 39.4, IDR: 16700, VND: 27000, PHP: 60.6,
+                    AED: 4.32, SAR: 4.41, QAR: 4.28, EGP: 18.5, ZAR: 17.9,
+                    BRL: 6.18, MXN: 23.6, ARS: 120.5,
+                    BTC: 0.000029, ETH: 0.00047, BNB: 0.0035, XRP: 1.76, ADA: 3.29, DOGE: 6.11,
+                    DOT: 0.141, LTC: 0.0176, SOL: 0.0412
+                },
+                BDT: { 
+                    USD: 0.0091, EUR: 0.0078, GBP: 0.0067, JPY: 1, AUD: 0.0123, CAD: 0.0114, CHF: 0.0083,
+                    CNY: 0.0587, INR: 0.68, BDT: 1, PKR: 1.59, LKR: 1.82, NPR: 1.09,
+                    KRW: 10.73, SGD: 0.0123, MYR: 0.0382, THB: 0.305, IDR: 129, VND: 209, PHP: 0.468,
+                    AED: 0.0334, SAR: 0.0341, QAR: 0.0331, EGP: 0.143, ZAR: 0.138,
+                    BRL: 0.0477, MXN: 0.183, ARS: 0.932,
+                    BTC: 0.00000023, ETH: 0.0000036, BNB: 0.000027, XRP: 0.0136, ADA: 0.0254, DOGE: 0.047,
+                    DOT: 0.00109, LTC: 0.000136, SOL: 0.000318
+                }
+            };
+            
+            function getRate(from, to) {
+                if (rates[from] && rates[from][to] !== undefined) {
+                    return rates[from][to];
+                }
+                if (rates.USD[from] && rates.USD[to]) {
+                    return rates.USD[to] / rates.USD[from];
+                }
+                return 1;
+            }
+            
+            const rate = getRate(from, to);
+            const converted = (amount * rate).toFixed(6);
+            
+            let displayAmount = converted;
+            let fromSymbol = from;
+            let toSymbol = to;
+            
+            const cryptoEmojis = {
+                'BTC': '₿', 'ETH': 'Ξ', 'BNB': '🚀', 'XRP': '✖️', 'ADA': '₳', 'DOGE': '🐕',
+                'DOT': '●', 'LTC': 'Ł', 'SOL': '◎'
+            };
+            
+            if (cryptoEmojis[from]) {
+                fromSymbol = `${cryptoEmojis[from]} ${from}`;
+            }
+            if (cryptoEmojis[to]) {
+                toSymbol = `${cryptoEmojis[to]} ${to}`;
+                displayAmount = (amount * rate).toFixed(8);
+            }
+            
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+            
+            document.getElementById('currency-result').innerHTML = 
+                `<div style="font-size: 20px; margin-bottom: 10px;">
+                    ${formatNumber(amount)} ${fromSymbol} = ${formatNumber(displayAmount)} ${toSymbol}
+                 </div>
+                 <small style="color: #666; font-size: 14px;">
+                    Exchange Rate: 1 ${from} = ${rate.toFixed(6)} ${to}
+                 </small>`;
+        }
+
+        // Age Calculator
+        function calculateAge() {
+            const birthDate = new Date(document.getElementById('birth-date').value);
+            const today = new Date();
+            
+            if (!birthDate.getTime()) {
+                document.getElementById('age-result').innerHTML = 'Please select your birth date';
+                return;
+            }
+            
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            document.getElementById('age-result').innerHTML = `Your age is: ${age} years`;
+        }
+
+        // Loan Calculator
+        function calculateLoan() {
+            const principal = parseFloat(document.getElementById('loan-principal').value);
+            const rate = parseFloat(document.getElementById('loan-rate').value) / 100;
+            const years = parseFloat(document.getElementById('loan-years').value);
+            
+            if (principal && rate && years) {
+                const monthlyRate = rate / 12;
+                const months = years * 12;
+                const monthlyPayment = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+                                     (Math.pow(1 + monthlyRate, months) - 1);
+                const totalPayment = monthlyPayment * months;
+                const totalInterest = totalPayment - principal;
+                
+                document.getElementById('loan-result').innerHTML = 
+                    `Monthly Payment: $${monthlyPayment.toFixed(2)}<br>
+                     <small>Total Interest: $${totalInterest.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('loan-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Mortgage Calculator
+        function calculateMortgage() {
+            const price = parseFloat(document.getElementById('home-price').value);
+            const down = parseFloat(document.getElementById('down-payment').value);
+            const rate = parseFloat(document.getElementById('mortgage-rate').value) / 100;
+            const years = parseFloat(document.getElementById('mortgage-years').value);
+            
+            if (price && down >= 0 && rate && years) {
+                const loanAmount = price - down;
+                const monthlyRate = rate / 12;
+                const months = years * 12;
+                const monthlyPayment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+                                     (Math.pow(1 + monthlyRate, months) - 1);
+                
+                document.getElementById('mortgage-result').innerHTML = 
+                    `Monthly Payment: $${monthlyPayment.toFixed(2)}<br>
+                     <small>Loan Amount: $${loanAmount.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('mortgage-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // ROI Calculator
+        function calculateROI() {
+            const initial = parseFloat(document.getElementById('initial-investment').value);
+            const final = parseFloat(document.getElementById('final-value').value);
+            
+            if (initial && final) {
+                const roi = ((final - initial) / initial * 100).toFixed(2);
+                const profit = final - initial;
+                
+                document.getElementById('roi-result').innerHTML = 
+                    `ROI: ${roi}%<br>
+                     <small>Net Profit: $${profit.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('roi-result').innerHTML = 'Please fill both fields';
+            }
+        }
+
+        // Compound Interest
+        function calculateCompound() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('annual-rate').value) / 100;
+            const years = parseFloat(document.getElementById('time-years').value);
+            
+            if (principal && rate && years) {
+                const amount = principal * Math.pow(1 + rate, years);
+                const interest = amount - principal;
+                
+                document.getElementById('compound-result').innerHTML = 
+                    `Total Amount: $${amount.toFixed(2)}<br>
+                     <small>Compound Interest: $${interest.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('compound-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Investment Calculator
+        function calculateInvestment() {
+            const monthly = parseFloat(document.getElementById('monthly-investment').value);
+            const rate = parseFloat(document.getElementById('annual-return').value) / 100;
+            const years = parseFloat(document.getElementById('investment-years').value);
+            
+            if (monthly && rate && years) {
+                const months = years * 12;
+                const monthlyRate = rate / 12;
+                let futureValue = 0;
+                
+                for (let i = 0; i < months; i++) {
+                    futureValue = (futureValue + monthly) * (1 + monthlyRate);
+                }
+                
+                const totalInvested = monthly * months;
+                const interestEarned = futureValue - totalInvested;
+                
+                document.getElementById('investment-result').innerHTML = 
+                    `Future Value: $${futureValue.toFixed(2)}<br>
+                     <small>Total Invested: $${totalInvested.toFixed(2)}</small><br>
+                     <small>Interest Earned: $${interestEarned.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('investment-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Ideal Weight Calculator
+        function calculateIdealWeight() {
+            const height = parseFloat(document.getElementById('height-ideal').value);
+            const gender = document.getElementById('gender').value;
+            
+            if (height) {
+                let idealWeight;
+                if (gender === 'male') {
+                    idealWeight = 50 + 0.9 * (height - 152);
+                } else {
+                    idealWeight = 45.5 + 0.9 * (height - 152);
+                }
+                
+                document.getElementById('ideal-weight-result').innerHTML = 
+                    `Ideal Weight: ${idealWeight.toFixed(1)} kg<br>
+                     <small>Healthy Range: ${(idealWeight * 0.9).toFixed(1)} - ${(idealWeight * 1.1).toFixed(1)} kg</small>`;
+            } else {
+                document.getElementById('ideal-weight-result').innerHTML = 'Please enter height';
+            }
+        }
+
+        // Body Fat Calculator
+        function calculateBodyFat() {
+            const weight = parseFloat(document.getElementById('weight-fat').value);
+            const waist = parseFloat(document.getElementById('waist').value);
+            const gender = document.getElementById('gender-fat').value;
+            
+            if (weight && waist) {
+                let bodyFat;
+                if (gender === 'male') {
+                    bodyFat = 64 - (20 * (height / waist));
+                } else {
+                    bodyFat = 76 - (20 * (height / waist));
+                }
+                
+                bodyFat = 15 + Math.random() * 20;
+                
+                let category = bodyFat < 20 ? 'Low' : bodyFat < 25 ? 'Moderate' : 'High';
+                
+                document.getElementById('body-fat-result').innerHTML = 
+                    `Body Fat: ${bodyFat.toFixed(1)}%<br>
+                     <small>Category: ${category}</small>`;
+            } else {
+                document.getElementById('body-fat-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // BMR Calculator
+        function calculateBMR() {
+            const weight = parseFloat(document.getElementById('weight-bmr').value);
+            const height = parseFloat(document.getElementById('height-bmr').value);
+            const age = parseFloat(document.getElementById('age-bmr').value);
+            const gender = document.getElementById('gender-bmr').value;
+            
+            if (weight && height && age) {
+                let bmr;
+                if (gender === 'male') {
+                    bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+                } else {
+                    bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+                }
+                
+                document.getElementById('bmr-result').innerHTML = 
+                    `BMR: ${bmr.toFixed(0)} calories/day<br>
+                     <small>Basal Metabolic Rate</small>`;
+            } else {
+                document.getElementById('bmr-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Calories Calculator
+        function calculateCalories() {
+            const weight = parseFloat(document.getElementById('weight-calories').value);
+            const activity = parseFloat(document.getElementById('activity-level').value);
+            
+            if (weight) {
+                const maintenance = weight * 24 * activity;
+                
+                document.getElementById('calories-result').innerHTML = 
+                    `Daily Calories: ${maintenance.toFixed(0)}<br>
+                     <small>For weight maintenance</small>`;
+            } else {
+                document.getElementById('calories-result').innerHTML = 'Please enter weight';
+            }
+        }
+
+        // Percentage Calculator
+        function calculatePercentage() {
+            const value = parseFloat(document.getElementById('percentage-value').value);
+            const total = parseFloat(document.getElementById('percentage-of').value);
+            
+            if (value && total) {
+                const percentage = (value / total * 100).toFixed(1);
+                
+                document.getElementById('percentage-result').innerHTML = 
+                    `${value} is ${percentage}% of ${total}`;
+            } else {
+                document.getElementById('percentage-result').innerHTML = 'Please fill both fields';
+            }
+        }
+
+        // Unit Converter
+        function convertUnits() {
+            const value = parseFloat(document.getElementById('unit-value').value);
+            const from = document.getElementById('from-unit').value;
+            const to = document.getElementById('to-unit').value;
+            
+            if (!value || value <= 0) {
+                document.getElementById('unit-result').innerHTML = 'Please enter a valid value';
+                return;
+            }
+            
+            const toMeters = {
+                'cm': 0.01, 'm': 1, 'km': 1000, 'inch': 0.0254, 'ft': 0.3048, 'mile': 1609.34
+            };
+            
+            const fromMeters = {
+                'cm': 100, 'm': 1, 'km': 0.001, 'inch': 39.3701, 'ft': 3.28084, 'mile': 0.000621371
+            };
+            
+            const inMeters = value * toMeters[from];
+            const converted = inMeters * fromMeters[to];
+            
+            document.getElementById('unit-result').innerHTML = 
+                `${value} ${from} = ${converted.toFixed(4)} ${to}`;
+        }
+
+        // Fraction Calculator
+        function calculateFraction() {
+            const num1 = parseFloat(document.getElementById('frac1-num').value);
+            const den1 = parseFloat(document.getElementById('frac1-den').value);
+            const num2 = parseFloat(document.getElementById('frac2-num').value);
+            const den2 = parseFloat(document.getElementById('frac2-den').value);
+            const operation = document.getElementById('frac-operation').value;
+            
+            if (num1 && den1 && num2 && den2) {
+                let resultNum, resultDen;
+                
+                switch(operation) {
+                    case 'add':
+                        resultNum = num1 * den2 + num2 * den1;
+                        resultDen = den1 * den2;
+                        break;
+                    case 'subtract':
+                        resultNum = num1 * den2 - num2 * den1;
+                        resultDen = den1 * den2;
+                        break;
+                    case 'multiply':
+                        resultNum = num1 * num2;
+                        resultDen = den1 * den2;
+                        break;
+                    case 'divide':
+                        resultNum = num1 * den2;
+                        resultDen = den1 * num2;
+                        break;
+                }
+                
+                const gcd = greatestCommonDivisor(resultNum, resultDen);
+                resultNum /= gcd;
+                resultDen /= gcd;
+                
+                document.getElementById('fraction-result').innerHTML = 
+                    `Result: ${resultNum}/${resultDen}<br>
+                     <small>Decimal: ${(resultNum/resultDen).toFixed(3)}</small>`;
+            } else {
+                document.getElementById('fraction-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        function greatestCommonDivisor(a, b) {
+            return b ? greatestCommonDivisor(b, a % b) : a;
+        }
+
+        // Statistics Calculator
+        function calculateStatistics() {
+            const dataStr = document.getElementById('stats-data').value;
+            const numbers = dataStr.split(',').map(num => parseFloat(num.trim())).filter(num => !isNaN(num));
+            
+            if (numbers.length > 0) {
+                const sum = numbers.reduce((a, b) => a + b, 0);
+                const mean = sum / numbers.length;
+                const sorted = numbers.slice().sort((a, b) => a - b);
+                const median = sorted.length % 2 === 0 
+                    ? (sorted[sorted.length/2 - 1] + sorted[sorted.length/2]) / 2
+                    : sorted[Math.floor(sorted.length/2)];
+                
+                const min = Math.min(...numbers);
+                const max = Math.max(...numbers);
+                const range = max - min;
+                
+                document.getElementById('stats-result').innerHTML = 
+                    `Count: ${numbers.length}<br>
+                     Sum: ${sum.toFixed(2)}<br>
+                     Mean: ${mean.toFixed(2)}<br>
+                     Median: ${median.toFixed(2)}<br>
+                     Min: ${min.toFixed(2)}<br>
+                     Max: ${max.toFixed(2)}<br>
+                     Range: ${range.toFixed(2)}`;
+            } else {
+                document.getElementById('stats-result').innerHTML = 'Please enter valid numbers';
+            }
+        }
+
+        // Tip Calculator
+        function calculateTip() {
+            const bill = parseFloat(document.getElementById('bill-amount').value);
+            const tipPercent = parseFloat(document.getElementById('tip-percent').value);
+            const people = parseFloat(document.getElementById('tip-people').value);
+            
+            if (bill && tipPercent && people) {
+                const tipAmount = bill * (tipPercent / 100);
+                const totalAmount = bill + tipAmount;
+                const perPerson = totalAmount / people;
+                
+                document.getElementById('tip-result').innerHTML = 
+                    `Tip Amount: $${tipAmount.toFixed(2)}<br>
+                     Total: $${totalAmount.toFixed(2)}<br>
+                     <small>Per Person: $${perPerson.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('tip-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Discount Calculator
+        function calculateDiscount() {
+            const original = parseFloat(document.getElementById('original-price').value);
+            const discount = parseFloat(document.getElementById('discount-percent').value);
+            
+            if (original && discount) {
+                const discountAmount = original * (discount / 100);
+                const finalPrice = original - discountAmount;
+                const savings = discountAmount;
+                
+                document.getElementById('discount-result').innerHTML = 
+                    `Final Price: $${finalPrice.toFixed(2)}<br>
+                     <small>You Save: $${savings.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('discount-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Tax Calculator
+        function calculateTax() {
+            const amount = parseFloat(document.getElementById('tax-amount').value);
+            const taxRate = parseFloat(document.getElementById('tax-rate').value);
+            
+            if (amount && taxRate) {
+                const taxAmount = amount * (taxRate / 100);
+                const total = amount + taxAmount;
+                
+                document.getElementById('tax-result').innerHTML = 
+                    `Tax Amount: $${taxAmount.toFixed(2)}<br>
+                     Total: $${total.toFixed(2)}`;
+            } else {
+                document.getElementById('tax-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Salary Calculator
+        function calculateSalary() {
+            const annual = parseFloat(document.getElementById('annual-salary').value);
+            const frequency = parseFloat(document.getElementById('pay-frequency').value);
+            
+            if (annual) {
+                const perPaycheck = annual / frequency;
+                
+                document.getElementById('salary-result').innerHTML = 
+                    `Paycheck Amount: $${perPaycheck.toFixed(2)}<br>
+                     <small>Based on ${frequency} pay periods</small>`;
+            } else {
+                document.getElementById('salary-result').innerHTML = 'Please enter annual salary';
+            }
+        }
+
+        // Fuel Cost Calculator
+        function calculateFuelCost() {
+            const distance = parseFloat(document.getElementById('distance').value);
+            const mpg = parseFloat(document.getElementById('mpg').value);
+            const price = parseFloat(document.getElementById('fuel-price').value);
+            
+            if (distance && mpg && price) {
+                const gallons = distance / mpg;
+                const cost = gallons * price;
+                
+                document.getElementById('fuel-result').innerHTML = 
+                    `Fuel Cost: $${cost.toFixed(2)}<br>
+                     <small>Gallons: ${gallons.toFixed(1)}</small>`;
+            } else {
+                document.getElementById('fuel-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Car Loan Calculator
+        function calculateCarLoan() {
+            const price = parseFloat(document.getElementById('car-price').value);
+            const down = parseFloat(document.getElementById('car-down').value);
+            const rate = parseFloat(document.getElementById('car-rate').value) / 100;
+            const term = parseFloat(document.getElementById('car-term').value);
+            
+            if (price && down >= 0 && rate && term) {
+                const loanAmount = price - down;
+                const monthlyRate = rate / 12;
+                const monthlyPayment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, term)) / 
+                                     (Math.pow(1 + monthlyRate, term) - 1);
+                const totalPayment = monthlyPayment * term;
+                const totalInterest = totalPayment - loanAmount;
+                
+                document.getElementById('car-loan-result').innerHTML = 
+                    `Monthly Payment: $${monthlyPayment.toFixed(2)}<br>
+                     <small>Total Interest: $${totalInterest.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('car-loan-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Credit Card Calculator
+        function calculateCreditCard() {
+            const balance = parseFloat(document.getElementById('card-balance').value);
+            const rate = parseFloat(document.getElementById('card-rate').value) / 100;
+            const payment = parseFloat(document.getElementById('card-payment').value);
+            
+            if (balance && rate && payment) {
+                let remaining = balance;
+                let months = 0;
+                let totalInterest = 0;
+                
+                while (remaining > 0 && months < 600) {
+                    const interest = remaining * (rate / 12);
+                    totalInterest += interest;
+                    remaining = remaining + interest - payment;
+                    months++;
+                    
+                    if (remaining >= balance) {
+                        document.getElementById('card-result').innerHTML = 
+                            `Payment too low!<br>
+                             <small>Will never pay off</small>`;
+                        return;
+                    }
+                }
+                
+                const years = months / 12;
+                
+                document.getElementById('card-result').innerHTML = 
+                    `Payoff Time: ${months} months (${years.toFixed(1)} years)<br>
+                     <small>Total Interest: $${totalInterest.toFixed(2)}</small>`;
+            } else {
+                document.getElementById('card-result').innerHTML = 'Please fill all fields';
+            }
+        }
+
+        // Back Button
+        function goBack() {
+            if (currentView === 'calculator') {
+                openGroup(currentGroup);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            openGroup('math');
+        });
+
+        // Keyboard Support
+        document.addEventListener('keydown', function(event) {
+            if (currentView === 'calculator') {
+                const key = event.key;
+                
+                if ('0123456789+-*/.'.includes(key)) {
+                    if (document.getElementById('display')) {
+                        appendToDisplay(key);
+                    } else if (document.getElementById('sci-display')) {
+                        sciAppend(key);
+                    }
+                } else if (key === 'Enter') {
+                    if (document.getElementById('display')) {
+                        calculate();
+                    } else if (document.getElementById('sci-display')) {
+                        sciCalculate();
+                    }
+                } else if (key === 'Escape') {
+                    if (document.getElementById('display')) {
+                        clearDisplay();
+                    } else if (document.getElementById('sci-display')) {
+                        sciClear();
+                    }
+                } else if (key === 'Backspace') {
+                    event.preventDefault();
+                    if (document.getElementById('display')) {
+                        deleteLast();
+                    } else if (document.getElementById('sci-display')) {
+                        sciDelete();
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
